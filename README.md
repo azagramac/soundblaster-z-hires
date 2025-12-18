@@ -2,9 +2,20 @@
 
 # High-Res Audio 192 kHz en Debian 13: Sound Blaster Z
 
-\
-Descargamos el .bin desde aqui: https://github.com/azagramac/soundblaster-z-hires/tree/master/usr/lib/firmware
 
+## Instalación auto
+Descargar el .deb desde Github Releases: https://github.com/azagramac/soundblaster-z-hires/releases
+```bash
+sudo dpkg -i soundblaster-z-hires_1.0.0_amd64.deb
+```
+o bien
+```bash
+sudo apt install ./soundblaster-z-hires_1.0.0_amd64.deb
+```
+
+# Instalación manual
+
+Descargamos el .bin desde aqui: https://github.com/azagramac/soundblaster-z-hires/tree/master/usr/lib/firmware
 Lo copiamos a:
 
 ```bash
