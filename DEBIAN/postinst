@@ -1,0 +1,81 @@
+#!/bin/sh
+set -e
+
+log() { echo "[soundblaster-z-hires] $*"; }
+
+log "⚙️ Starting post-installation"
+
+if ! lspci -nn | grep -qi '1102:0012'; then
+    log "❌ Sound Blaster Z not detected, aborting installation"
+    exit 1
+fi
+log "🔊 Sound Blaster Z detected"
+
+BIN_FILE="/usr/lib/firmware/ctefx-desktop.bin"
+if [ -f "$BIN_FILE" ]; then
+    log "🔐 Setting firmware permissions"
+    chmod 644 "$BIN_FILE"
+    chown root:root "$BIN_FILE"
+fi
+
+REAL_USER=${SUDO_USER:-$(logname 2>/dev/null || true)}
+REAL_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
+
+if [ -n "$REAL_USER" ] && [ -d "$REAL_HOME" ]; then
+    log "⚙️ Generating user configuration for $REAL_USER"
+
+    # PipeWire config
+    CONF_DIR="$REAL_HOME/.config/pipewire/pipewire.conf.d"
+    mkdir -p "$CONF_DIR"
+    CONF_FILE="$CONF_DIR/90-clock-rate.conf"
+
+    SINK_NAME=$(pactl list short sinks | head -n1 | awk '{print $2}')
+    FORMAT=$(aplay -D hw:0,0 --dump-hw-params /dev/zero 2>/dev/null \
+        | grep -A1 "Available formats" | tail -n1 | awk '{print $1}' | sed 's/_//g')
+    [ -z "$FORMAT" ] && FORMAT="S24LE"
+
+    cat > "$CONF_FILE" <<EOF
+context.properties = {
+    default.clock.rate          = 192000
+    default.clock.allowed-rates = [ 44100 48000 96000 192000 ]
+    default.audio.format        = "$FORMAT"
+}
+EOF
+    chmod 600 "$CONF_FILE"
+    chown "$REAL_USER:$REAL_USER" "$CONF_FILE"
+
+    # WirePlumber config
+    WP_DIR="$REAL_HOME/.config/wireplumber/wireplumber.conf.d"
+    mkdir -p "$WP_DIR"
+    WP_FILE="$WP_DIR/60-soundblaster-192khz.conf"
+
+    cat > "$WP_FILE" <<EOF
+monitor.alsa.rules = [
+  {
+    matches = [
+      { device.name = "$SINK_NAME" }
+    ]
+    actions = {
+      update-props = {
+        audio.format = "$FORMAT"
+        audio.rate = 192000
+        audio.channels = 2
+        api.alsa.period-size = 1024
+        api.alsa.headroom = 0
+        session.suspend-timeout-seconds = 0
+      }
+    }
+  }
+]
+EOF
+    chmod 600 "$WP_FILE"
+    chown "$REAL_USER:$REAL_USER" "$WP_FILE"
+
+    SCRIPT_FILE="/usr/share/soundblaster-z-hires/enable-hires.sh"
+    if [ -x "$SCRIPT_FILE" ]; then
+        "$SCRIPT_FILE" "$REAL_HOME"
+    fi
+fi
+
+log "✅ Installation completed successfully"
+exit 0

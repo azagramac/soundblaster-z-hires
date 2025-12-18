@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+log() {
+    echo "[soundblaster-z-hires][prerm] $*"
+}
+
+log "Stopping user services before removal"
+
+REAL_USER=${SUDO_USER:-$(logname 2>/dev/null || true)}
+
+if [ -n "$REAL_USER" ]; then
+    if command -v systemctl >/dev/null 2>&1; then
+        su - "$REAL_USER" -c "systemctl --user stop pipewire pipewire-pulse wireplumber" || true
+        log "User services stopped for $REAL_USER"
+    fi
+fi
+
+exit 0

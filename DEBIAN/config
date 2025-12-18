@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+. /usr/share/debconf/confmodule
+
+db_input high soundblaster-z-hires/license || true
+db_go || true
+
+exit 0

@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+log() { echo "[soundblaster-z-hires][postrm] $*"; }
+
+log "🗑 Cleaning up user and system files"
+
+REAL_USER=${SUDO_USER:-$(logname 2>/dev/null || true)}
+REAL_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
+
+if [ -n "$REAL_HOME" ] && [ -d "$REAL_HOME" ]; then
+    rm -f "$REAL_HOME/.config/pipewire/pipewire.conf.d/90-clock-rate.conf"
+    rm -f "$REAL_HOME/.config/wireplumber/wireplumber.conf.d/60-soundblaster-192khz.conf"
+
+    rmdir --ignore-fail-on-non-empty "$REAL_HOME/.config/pipewire/pipewire.conf.d" 2>/dev/null
+    rmdir --ignore-fail-on-non-empty "$REAL_HOME/.config/wireplumber/wireplumber.conf.d" 2>/dev/null
+
+    log "✅ Removed user configuration files"
+fi
+
+rm -f /usr/lib/firmware/ctefx-desktop.bin
+log "✅ Removed firmware file"
+
+rm -rf /usr/share/soundblaster-z-hires
+log "✅ Removed shared folder"
+
+log "✅ Post-removal cleanup complete"
+exit 0

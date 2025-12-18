@@ -1,0 +1,55 @@
+name: 📦 Build .deb
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v6
+
+    - name: 🧰 Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y fakeroot dpkg-dev xz-utils
+
+    - name: 🔐 Fix permissions
+      run: |
+        chmod 755 soundblaster-z-hires/DEBIAN/postinst
+        chmod 755 soundblaster-z-hires/DEBIAN/prerm
+        chmod 755 soundblaster-z-hires/DEBIAN/postrm
+        chmod 755 soundblaster-z-hires/DEBIAN/config
+        chmod 644 soundblaster-z-hires/DEBIAN/control
+        chmod 644 soundblaster-z-hires/DEBIAN/templates
+        chmod 644 soundblaster-z-hires/usr/lib/firmware/ctefx-desktop.bin
+        chmod 755 soundblaster-z-hires/usr/share/soundblaster-z-hires/enable-hires.sh
+        chmod 644 soundblaster-z-hires/usr/share/doc/soundblaster-z-hires/LICENSE
+
+    - name: 📦 Build .deb
+      run: |
+        PACKAGE_NAME=$(grep ^Package: soundblaster-z-hires/DEBIAN/control | awk '{print $2}')
+        VERSION=$(grep ^Version: soundblaster-z-hires/DEBIAN/control | awk '{print $2}')
+        ARCH=$(grep ^Architecture: soundblaster-z-hires/DEBIAN/control | awk '{print $2}')
+
+        FILE_NAME="${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
+        fakeroot dpkg-deb --build --root-owner-group soundblaster-z-hires "$FILE_NAME"
+
+        echo "PACKAGE_FILE=$FILE_NAME" >> $GITHUB_ENV
+        echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
+
+    - name: 🚀 Upload .deb to GitHub Releases
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ env.PACKAGE_VERSION }}
+        files: ${{ env.PACKAGE_FILE }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,13 @@
+Package: soundblaster-z-hires
+Version: 1.0.0
+Architecture: amd64
+Maintainer: Jose l. Azagra <info@azagra.dev>
+Section: sound
+Priority: optional
+Depends: firmware-linux-nonfree, firmware-misc-nonfree, pipewire, wireplumber
+Homepage: https://blog.azagra.dev/linux/high-res-audio-192-khz-en-debian-13-sound-blaster-z
+Vcs-Git: https://github.com/azagramac/soundblaster-z-hires.git
+Vcs-Browser: https://github.com/azagramac/soundblaster-z-hires
+Description: Enable 192 kHz high-resolution audio on Sound Blaster Z
+ This package installs firmware and user configuration to enable high-resolution audio
+ on Sound Blaster Z cards.
