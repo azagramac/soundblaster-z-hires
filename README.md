@@ -4,7 +4,7 @@
 
 
 ## Instalación auto
-Descargar el .deb desde Github Releases: https://github.com/azagramac/soundblaster-z-hires/releases
+Descargar el .deb desde [Github Releases](https://github.com/azagramac/soundblaster-z-hires/releases)
 ```bash
 sudo dpkg -i soundblaster-z-hires_1.0.0_amd64.deb
 ```
@@ -15,7 +15,7 @@ sudo apt install ./soundblaster-z-hires_1.0.0_amd64.deb
 
 # Instalación manual
 
-Descargamos el .bin desde aqui: https://github.com/azagramac/soundblaster-z-hires/tree/master/usr/lib/firmware
+Descargamos el .bin desde [aquí](https://github.com/azagramac/soundblaster-z-hires/tree/master/usr/lib/firmware)
 
 Lo copiamos al directorio `/usr/lib/firmware/`
 ```bash
