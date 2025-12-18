@@ -24,21 +24,21 @@ jobs:
 
     - name: 🔐 Fix permissions
       run: |
-        chmod 755 soundblaster-z-hires/DEBIAN/postinst
-        chmod 755 soundblaster-z-hires/DEBIAN/prerm
-        chmod 755 soundblaster-z-hires/DEBIAN/postrm
-        chmod 755 soundblaster-z-hires/DEBIAN/config
-        chmod 644 soundblaster-z-hires/DEBIAN/control
-        chmod 644 soundblaster-z-hires/DEBIAN/templates
-        chmod 644 soundblaster-z-hires/usr/lib/firmware/ctefx-desktop.bin
-        chmod 755 soundblaster-z-hires/usr/share/soundblaster-z-hires/enable-hires.sh
-        chmod 644 soundblaster-z-hires/usr/share/doc/soundblaster-z-hires/LICENSE
+        chmod 755 DEBIAN/postinst
+        chmod 755 DEBIAN/prerm
+        chmod 755 DEBIAN/postrm
+        chmod 755 DEBIAN/config
+        chmod 644 DEBIAN/control
+        chmod 644 DEBIAN/templates
+        chmod 644 usr/lib/firmware/ctefx-desktop.bin
+        chmod 755 usr/share/soundblaster-z-hires/enable-hires.sh
+        chmod 644 usr/share/doc/soundblaster-z-hires/LICENSE
 
     - name: 📦 Build .deb
       run: |
-        PACKAGE_NAME=$(grep ^Package: soundblaster-z-hires/DEBIAN/control | awk '{print $2}')
-        VERSION=$(grep ^Version: soundblaster-z-hires/DEBIAN/control | awk '{print $2}')
-        ARCH=$(grep ^Architecture: soundblaster-z-hires/DEBIAN/control | awk '{print $2}')
+        PACKAGE_NAME=$(grep ^Package: DEBIAN/control | awk '{print $2}')
+        VERSION=$(grep ^Version: DEBIAN/control | awk '{print $2}')
+        ARCH=$(grep ^Architecture: DEBIAN/control | awk '{print $2}')
 
         FILE_NAME="${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
         fakeroot dpkg-deb --build --root-owner-group soundblaster-z-hires "$FILE_NAME"
