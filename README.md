@@ -16,8 +16,8 @@ sudo apt install ./soundblaster-z-hires_1.0.0_amd64.deb
 # Instalación manual
 
 Descargamos el .bin desde aqui: https://github.com/azagramac/soundblaster-z-hires/tree/master/usr/lib/firmware
-Lo copiamos a:
 
+Lo copiamos al directorio `/usr/lib/firmware/`
 ```bash
 sudo cp -rf ctefx-desktop.bin /usr/lib/firmware/
 ```
