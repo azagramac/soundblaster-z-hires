@@ -41,7 +41,7 @@ jobs:
         ARCH=$(grep ^Architecture: DEBIAN/control | awk '{print $2}')
 
         FILE_NAME="${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
-        fakeroot dpkg-deb --build --root-owner-group soundblaster-z-hires "$FILE_NAME"
+        fakeroot dpkg-deb --build --root-owner-group . "$FILE_NAME"
 
         echo "PACKAGE_FILE=$FILE_NAME" >> $GITHUB_ENV
         echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
